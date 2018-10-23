@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.bashmag.khakimulin.reportmonitor.screens.reports.common.FrameLayoutForSwipeRefresh xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/swipe_to_refresh"
+        android:textAppearance="?android:attr/textAppearance"
+        android:background="@android:color/transparent"/>
+<android.support.v4.widget.SwipeRefreshLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipe">
+
+    <ListView
+        android:id="@+id/chartList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+</android.support.v4.widget.SwipeRefreshLayout >
+
+</ru.bashmag.khakimulin.reportmonitor.screens.reports.common.FrameLayoutForSwipeRefresh>
