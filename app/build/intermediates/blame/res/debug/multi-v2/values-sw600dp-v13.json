@@ -1,0 +1,55 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\projects\\android studio\\reportmonitormvp\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+            "map": [
+                {
+                    "source": "D:\\projects\\android studio\\reportmonitormvp\\app\\src\\main\\res\\values-sw600dp\\dimens.xml",
+                    "from": {
+                        "startLines": "5,16,6,8,14,7,12,13,11,15,4,2,3",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "221,708,271,372,611,322,497,558,442,660,166,57,111",
+                        "endColumns": "48,56,49,44,47,48,59,51,53,46,53,52,53",
+                        "endOffsets": "265,760,316,412,654,366,552,605,491,702,215,105,160"
+                    },
+                    "to": {
+                        "startLines": "10,11,21,22,23,24,25,26,27,28,29,30,31",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "611,660,1279,1329,1374,1422,1471,1531,1583,1637,1684,1738,1791",
+                        "endColumns": "48,56,49,44,47,48,59,51,53,46,53,52,53",
+                        "endOffsets": "655,712,1324,1369,1417,1466,1526,1578,1632,1679,1733,1786,1840"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Khakimulin\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-28.0.0.aar\\3c77517c6f7a24c111ea5f84827f6c2e\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,124,193,263,337,413,472,543",
+                        "endColumns": "68,68,69,73,75,58,70,67",
+                        "endOffsets": "119,188,258,332,408,467,538,606"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Khakimulin\\.gradle\\caches\\transforms-1\\files-1.1\\design-28.0.0.aar\\84e51496a385f6e5a055ee0491350b1f\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,10,11,12",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,115,185,256,328,386,444,553,617,680",
+                        "endLines": "2,3,4,5,6,7,9,10,11,15",
+                        "endColumns": "59,69,70,71,57,57,10,63,62,10",
+                        "endOffsets": "110,180,251,323,381,439,548,612,675,847"
+                    },
+                    "to": {
+                        "startLines": "12,13,14,15,16,17,18,20,32,33",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "717,777,847,918,990,1048,1106,1215,1845,1908",
+                        "endLines": "12,13,14,15,16,17,19,20,32,36",
+                        "endColumns": "59,69,70,71,57,57,10,63,62,10",
+                        "endOffsets": "772,842,913,985,1043,1101,1210,1274,1903,2075"
+                    }
+                }
+            ]
+        }
+    ]
+}
