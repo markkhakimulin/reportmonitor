@@ -377,7 +377,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
         saveSharedPreference(itemId,  presenter.getPeriodTitle()
                 , presenter.getStartDate().getTime()
-                , presenter.getFinishDate().getTime());
+                , presenter.getFinishDate().getTime()
+                ,null);
         return super.onOptionsItemSelected(menuItem);
      }
 
@@ -432,7 +433,11 @@ public abstract class BaseActivity extends AppCompatActivity
         });
     }
 
-    public void saveSharedPreference(int typeId, String periodTitle, long periodStart, long periodFinish) {
+    public void saveSharedPreference(int typeId,
+                                     String periodTitle,
+                                     long periodStart,
+                                     long periodFinish,
+                                     ArrayList<String> chosenStoreList) {
 
     }
 
@@ -470,7 +475,8 @@ public abstract class BaseActivity extends AppCompatActivity
         saveSharedPreference(R.id.action_custom_period_filter,
                 presenter.getPeriodTitle(),
                 presenter.getStartDate().getTime(),
-                presenter.getFinishDate().getTime());
+                presenter.getFinishDate().getTime(),
+                null);
         this.previousDate = date;
     }
 

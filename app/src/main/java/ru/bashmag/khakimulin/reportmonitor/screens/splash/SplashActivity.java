@@ -33,8 +33,8 @@ import ru.bashmag.khakimulin.reportmonitor.screens.splash.mvp.SplashPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * Created by Mark Khakimulin on 03.10.2018.
+ * Email : mark.khakimulin@gmail.com
  */
 public class SplashActivity extends BaseActivity {
 
@@ -46,11 +46,7 @@ public class SplashActivity extends BaseActivity {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
 
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -184,14 +180,6 @@ public class SplashActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         this.splashPresenter.refresh();
-    }
-
-    public void saveSharedPreference(int type,
-                                     String title,
-                                     long startDate,
-                                     long finishDate,
-                                     ArrayList<String> arrayList) {
-
     }
 
     public void setStatus(String state) {

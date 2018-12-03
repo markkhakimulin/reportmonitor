@@ -28,6 +28,8 @@
     <string name="month_field">Месяц</string>
     <string name="dialog_choose_store_title">Выберите магазин</string>
     <string name="dialog_choose_period_title">Выберите период</string>
+    <string name="dialog_vpn_settings_title">Необходимо подключение VPN. Открыть сетевые настройки?</string>
+    <string name="dialog_net_settings_title">Необходимо подключение к сети. Открыть сетевые настройки?</string>
 
     <string name="plan_field">План</string>
     <string name="sales_report_activity_name">Показатели продаж</string>
@@ -46,5 +48,6 @@
     <string name="on_error_loading">Ошибка загрузки данных</string>
     <string name="on_error_chosen_period">Не выбран период</string>
     <string name="on_error_chosen_stores">Не выбрано ни одного магазина</string>
+    <string name="on_error_process">Ошибка обработки данных</string>
 
 </resources>

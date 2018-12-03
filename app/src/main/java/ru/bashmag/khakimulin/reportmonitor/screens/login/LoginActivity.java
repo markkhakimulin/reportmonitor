@@ -53,9 +53,6 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.loginButton)
     Button loginButton;
 
-    //@BindView(R.id.anonimousButton)
-    //Button anonimousButton;
-
     @BindView(R.id.image_logo)
     ImageView logo;
 

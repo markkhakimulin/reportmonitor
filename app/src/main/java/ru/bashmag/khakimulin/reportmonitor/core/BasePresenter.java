@@ -1,7 +1,6 @@
 package ru.bashmag.khakimulin.reportmonitor.core;
 
 import android.support.annotation.CallSuper;
-import android.text.TextUtils;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -9,29 +8,20 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
-import dagger.Provides;
 import ru.bashmag.khakimulin.reportmonitor.R;
+import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.ChosenStore;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
-import ru.bashmag.khakimulin.reportmonitor.db.tables.User;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func0;
-import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
-import ru.bashmag.khakimulin.reportmonitor.db.DB;
-import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 
 /**
  * Created by Mark Khakimulin on 01.11.2018.
@@ -132,7 +122,7 @@ public abstract class BasePresenter {
     protected void processThrow(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException) {
             baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
-                    , "Необходимо подключение VPN. Открыть сетевые настройки?"
+                    ,baseView.getString(R.string.dialog_vpn_settings_title)
                     , new Func0<Void>() {
                         @Override
                         public Void call() {
@@ -141,13 +131,13 @@ public abstract class BasePresenter {
                         }
                     }, null);
         } else if (throwable instanceof IllegalStateException) {
-            baseView.showYesNoMessageDialog("Ошибка обработки данных"
+            baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_process)
                     , throwable.getMessage()
                     , null
                     , null);
         } else if (throwable instanceof ConnectException) {
             baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
-                    ,"Необходимо подключение к сети. Открыть сетевые настройки?"
+                    ,baseView.getString(R.string.dialog_net_settings_title)
                     , new Func0<Void>() {
                         @Override
                         public Void call() {
@@ -187,7 +177,6 @@ public abstract class BasePresenter {
             db.chosenStoreDao().delete(userId,storeId);
         }
     }
-
 
     public Date getStartDate() {
         return this.startDate;

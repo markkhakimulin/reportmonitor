@@ -115,6 +115,7 @@ public class TurnoverReportActivity extends BaseActivity {
     }
 
 
+    @Override
     public void saveSharedPreference(int type,String title,long startDate,long finishDate,ArrayList<String> chosenStoreList) {
         SharedPreferences.Editor edit = sp.edit();
         if (type != 0)

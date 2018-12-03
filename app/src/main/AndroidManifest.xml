@@ -30,6 +30,12 @@
         <activity android:name=".screens.reports.turnover.TurnoverReportActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden"/>
+        <activity android:name="ru.bashmag.khakimulin.reportmonitor.screens.login.LoginActivity"
+            android:theme="@style/FullscreenTheme"
+            android:label="@string/login_activity_name" />
+        <activity android:name="ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.SalesReportActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation" />
     </application>
 
 </manifest>
