@@ -19,22 +19,28 @@ import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 @Dao
 public interface StoreDao {
 
-    @Query("SELECT * FROM store order by description")
-    List<Store> getAll();
-
-    @Query("SELECT * FROM store WHERE id = :id")
-    Store getById(String id);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Store store);
-
-    @Delete
-    void deleteAll(List<Store> storeList);
-
     @Delete
     void delete(Store store);
 
+    @Delete
+    void deleteAll(List<Store> list);
+
+    @Query("delete FROM store WHERE store.id not in (:storeList)")
+    void deleteAllExcept(List<String> storeList);
+
+    @Query("SELECT * FROM store order by description")
+    List<Store> getAll();
+
+    @Query("SELECT * FROM store WHERE id = :storeId")
+    Store getById(String storeId);
+
+    @Query("SELECT * FROM store inner join user_store as us on store.id = us.id WHERE us.user_id = :userId")
+    List<Store> getByUserId(String userId);
+
     @Query("SELECT * FROM store limit 3")
     List<Store> getTop3();
+
+    @Insert(onConflict = 1)
+    void insert(Store store);
 
 }

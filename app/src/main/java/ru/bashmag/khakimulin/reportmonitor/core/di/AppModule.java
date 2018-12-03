@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.AppRxSchedulers;
@@ -30,8 +31,8 @@ public class AppModule {
 
     @AppScope
     @Provides
-    public HttpTransportSE provideHttpTransportSE() {
-        return new HttpTransportSE(Constants.SOAP_URL,60000);
+    public TimeoutHttpTransport provideHttpTransportSE() {
+        return new TimeoutHttpTransport(Constants.SOAP_URL);
     }
     @AppScope
     @Provides
@@ -48,8 +49,10 @@ public class AppModule {
     @AppScope
     @Provides
     DB provideDBHelper() {
-        return Room.databaseBuilder(mApplication, DB.class, Constants.DB)
-                .build();
+        return (DB) Room.databaseBuilder(this.mApplication, DB.class, Constants.DB).
+                allowMainThreadQueries().
+                fallbackToDestructiveMigration().
+                build();
     }
     @AppScope
     @Provides

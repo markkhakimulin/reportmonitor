@@ -12,6 +12,8 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
+import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.core.di.AppScope;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.screens.splash.SplashActivity;
@@ -29,7 +31,7 @@ import rx.subscriptions.CompositeSubscription;
 @Module
 public class SplashModule {
 
-
+    private BasePresenter basePresenter;
     private SplashActivity splashContext;
 
     public SplashModule(SplashActivity context) {
@@ -38,29 +40,34 @@ public class SplashModule {
 
     @SplashScope
     @Provides
+    BasePresenter provideBasePresenter(DB db, RxSchedulers schedulers, SplashModel model, CompositeSubscription subscription) {
+        this.basePresenter = new SplashPresenter(db, model, this.splashContext, schedulers, subscription);
+        return this.basePresenter;
+    }
+
+    @SplashScope
+    @Provides
+    CompositeSubscription provideCompositeSubscription() {
+        return new CompositeSubscription();
+    }
+
+    @SplashScope
+    @Provides
+    SplashPresenter providePresenter() {
+        return (SplashPresenter) this.basePresenter;
+    }
+
+    @SplashScope
+    @Provides
     SplashActivity provideSplashContext() {
-        return splashContext;
-    }
-    @SplashScope
-    @Provides
-    SplashPresenter providePresenter(RxSchedulers schedulers, SplashModel model) {
-        CompositeSubscription compositeSubscription = new CompositeSubscription();
-        return new SplashPresenter(model,splashContext, schedulers, compositeSubscription);
+        return this.splashContext;
     }
 
     @SplashScope
     @Provides
-    SplashModel provideSplashModel(DB db,HttpTransportSE httpTransportSE,SoapSerializationEnvelope envelope,SoapObject soapObject, Context ctx) {
-        return new SplashModel(db, httpTransportSE, envelope,soapObject, ctx);
+    SplashModel provideSplashModel(DB db, TimeoutHttpTransport httpTransportSE, SoapSerializationEnvelope envelope, Context ctx) {
+        return new SplashModel(db, httpTransportSE, envelope, ctx);
     }
-
-    @SplashScope
-    @Provides
-    SoapObject provideSoapObject() {
-
-        return new SoapObject(Constants.SOAP_NAMESPACE, Constants.SOAP_METHOD_GET_STORES);
-    }
-
 
 
 

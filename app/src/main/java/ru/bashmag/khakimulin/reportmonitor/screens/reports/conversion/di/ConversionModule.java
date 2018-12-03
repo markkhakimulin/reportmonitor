@@ -1,27 +1,18 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.di;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import dagger.Module;
 import dagger.Provides;
-import ru.bashmag.khakimulin.reportmonitor.R;
+import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
+import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionModel;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionPresenter;
-import ru.bashmag.khakimulin.reportmonitor.screens.splash.SplashActivity;
-import ru.bashmag.khakimulin.reportmonitor.screens.splash.mvp.SplashModel;
-import ru.bashmag.khakimulin.reportmonitor.screens.splash.mvp.SplashPresenter;
-import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -31,24 +22,30 @@ import rx.subscriptions.CompositeSubscription;
  */
 @Module
 public class ConversionModule {
-
-
+    private BasePresenter basePresenter;
+    private ArrayList<String> chosenStoreList;
     private ConversionReportActivity context;
+    private Date finishDate;
+    private Date startDate;
+    private String userId;
 
-    public ConversionModule(ConversionReportActivity context) {
+    public ConversionModule(ConversionReportActivity context, Date startDate, Date finishDate, String userId, ArrayList<String> chosenStoreList) {
         this.context = context;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+        this.userId = userId;
+        this.chosenStoreList = chosenStoreList;
     }
 
     @ConversionScope
     @Provides
-    ConversionReportActivity provideSplashContext() {
-        return context;
-    }
-
-    @ConversionScope
-    @Provides
-    ConversionPresenter providePresenter(RxSchedulers schedulers, ConversionModel model, CompositeSubscription compositeSubscription) {
-        return new ConversionPresenter(model,context, schedulers, compositeSubscription);
+    BasePresenter provideBasePresenter(DB db, RxSchedulers schedulers, ConversionModel model, CompositeSubscription subscription) {
+        this.basePresenter = new ConversionPresenter(db, model, this.context, schedulers, subscription);
+        this.basePresenter.setStartDate(this.startDate);
+        this.basePresenter.setFinishDate(this.finishDate);
+        this.basePresenter.setUserId(this.userId);
+        this.basePresenter.setLocalChosenStoreList(this.chosenStoreList);
+        return this.basePresenter;
     }
 
     @ConversionScope
@@ -59,9 +56,19 @@ public class ConversionModule {
 
     @ConversionScope
     @Provides
-    ConversionModel provideSplashModel(DB db,HttpTransportSE httpTransportSE,SoapSerializationEnvelope envelope) {
-        return new ConversionModel(db, httpTransportSE, envelope, context);
+    ConversionPresenter providePresenter() {
+        return (ConversionPresenter) this.basePresenter;
     }
 
+    @ConversionScope
+    @Provides
+    ConversionReportActivity provideSplashContext() {
+        return this.context;
+    }
 
+    @ConversionScope
+    @Provides
+    ConversionModel provideSplashModel(DB db, TimeoutHttpTransport httpTransportSE, SoapSerializationEnvelope envelope) {
+        return new ConversionModel(db, httpTransportSE, envelope, this.context);
+    }
 }

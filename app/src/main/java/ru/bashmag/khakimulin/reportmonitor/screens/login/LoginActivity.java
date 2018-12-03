@@ -136,14 +136,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-       /* anonimousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showButtons(false);
-                showReportListActivity(new User(Constants.EMPTY_ID,getString(R.string.anonymous)));
-            }
-        });*/
-
         loginPresenter.onCreate();
 
         @NonNull
@@ -178,7 +170,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        showLoginPanel();
         showButtons(true);
     }
 
@@ -199,13 +190,6 @@ public class LoginActivity extends BaseActivity {
         loginText.showDropDown();
     }
 
-    public void showLoginPanel() {
-
-        /*Animation logoMove = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.logo_up);
-        Animation logoFadeIn = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.login_container_faid_in);
-        logo.startAnimation(logoMove);
-        loginContent.startAnimation(logoFadeIn);*/
-    }
 
     @Override
     protected void resolveDaggerDependency() {
@@ -226,8 +210,7 @@ public class LoginActivity extends BaseActivity {
         SharedPreferences.Editor edit = sp.edit();
         edit.putString(Constants.USER_ID_PREFERENCES,user.getId());
         edit.putString(Constants.USER_TITLE_PREFERENCES,user.getDescription());
-        //edit.putStringSet(Constants.CHOSEN_STORES,new HashSet<>());
-        edit.commit();
+        edit.apply();
 
         Intent i = new Intent(this, TurnoverReportActivity.class);
         i.putExtra(Constants.USER_ID,user.getId());
@@ -253,11 +236,6 @@ public class LoginActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         loginPresenter.onDestroy();
-    }
-
-    @Override
-    public void saveSharedPreference(int type, String title, long startDate, long finishDate, ArrayList<String> chosenStoreList) {
-
     }
 
     @Override

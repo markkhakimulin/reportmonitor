@@ -11,14 +11,23 @@
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="android:buttonStyle">@style/SplashButtonStyle</item>
         <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:foreground">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashAlertDialogStyle">
+        <item name="android:buttonStyle">@style/SplashDialogButtonStyle</item>
+    </style>
+    <style name="SplashButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="SplashDialogButtonStyle">
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
 </resources>

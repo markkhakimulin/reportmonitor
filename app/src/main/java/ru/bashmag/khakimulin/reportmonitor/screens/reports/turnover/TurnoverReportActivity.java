@@ -75,19 +75,7 @@ public class TurnoverReportActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         swipe.setOnRefreshListener(() -> {
-
-            if (presenter.getStartDate() == null || presenter.getFinishDate() == null) {
-                swipe.setRefreshing(false);
-                onShowToast("Не выбран период");
-                return;
-            }
-
-            if (presenter.getChosenStores().size() == 0) {
-                swipe.setRefreshing(false);
-                onShowToast("Не выбрано ни одного магазина");
-                return;
-            }
-            presenter.refresh();
+            turnoverPresenter.refresh();
         });
 
         swipe.setColorSchemeColors(getColorWrapper(this,R.color.colorPrimary),

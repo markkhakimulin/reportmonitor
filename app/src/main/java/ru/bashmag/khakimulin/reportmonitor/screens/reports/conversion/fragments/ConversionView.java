@@ -11,8 +11,11 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.Conversion
  */
 public interface ConversionView {
 
-    void onShowStores(ArrayList<Store> stores);
-    void setRefreshing(Boolean refreshing);
-    void onShowReport(ArrayList<ConversionData> data);
+    void onDestroy();
+
+    void onShowReport(ArrayList<ConversionData> arrayList);
+
+    void setRefreshing(Boolean bool);
+
     String tag();
 }

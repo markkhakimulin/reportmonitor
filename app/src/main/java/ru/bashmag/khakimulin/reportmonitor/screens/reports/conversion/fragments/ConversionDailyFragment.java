@@ -1,20 +1,16 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments;
 
 import android.content.res.Resources;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -22,13 +18,10 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.MPPointF;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -41,7 +34,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseFragment;
-import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.data.ConversionBarData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.items.BarChartDaily;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.items.ConversionMarker;
@@ -62,24 +54,18 @@ public class ConversionDailyFragment extends BaseFragment implements ConversionV
     @Nullable
     @BindView(R.id.chart)
     BarChartDaily chart;
-
     @BindView(R.id.swipe)
     public SwipeRefreshLayout swipe;
-
     @BindView(R.id.empty)
     public TextView empty;
 
     @Inject
     ConversionPresenter presenter;
-
     @Inject
     Resources resources;
 
     private DateFormat dateFormat = new SimpleDateFormat(FORMATDATE_HOUR,Locale.getDefault());
-    private Date startDate,finishDate;
-    private ArrayList<String> chosenStoreList = new ArrayList<>();
     private Unbinder unbinder;
-    private ConversionData conversionData;
     private Constants.ReportType type;
 
     public static ConversionDailyFragment newInstance(ConversionData data,Constants.ReportType type) {
@@ -96,19 +82,7 @@ public class ConversionDailyFragment extends BaseFragment implements ConversionV
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
-
         if (getArguments() != null) {
-            conversionData = getArguments().getParcelable(ConversionData.class.getCanonicalName());
-
-            assert conversionData != null;
-
-            startDate = Utils.getStartOfADay(conversionData.date);
-            finishDate =  Utils.getEndOfADay(conversionData.date);
-
-            chosenStoreList = new ArrayList<>();
-            chosenStoreList.add(conversionData.storeId);
-
             type = (Constants.ReportType)getArguments().getSerializable(Constants.ReportType.class.getCanonicalName());
         }
     }
@@ -130,21 +104,26 @@ public class ConversionDailyFragment extends BaseFragment implements ConversionV
         unbinder.unbind();
     }
 
-
     @Override
     protected void onViewInjected(Bundle savedInstanceState) {
         super.onViewInjected(savedInstanceState);
 
         setRefreshing(true);
 
-        swipe.setOnRefreshListener(() -> presenter.refreshDaily(startDate,finishDate,chosenStoreList));
+        swipe.setOnRefreshListener(() -> {
+            if (Utils.getDaysCount(presenter.getFinishDate(), presenter.getStartDate()) > 1) {
+                presenter.replaceAndRefresh();
+            } else {
+                presenter.refreshDaily();
+            }
+        });
 
         swipe.setColorSchemeColors(getColorWrapper(getActivity(),R.color.colorPrimary),
                 getColorWrapper(getActivity(),R.color.colorAccent));
 
         Objects.requireNonNull(chart).setNoDataText("");
 
-        presenter.refreshDaily(startDate,finishDate,chosenStoreList);
+        presenter.refreshDaily();
 
     }
 
@@ -160,23 +139,16 @@ public class ConversionDailyFragment extends BaseFragment implements ConversionV
     }
 
     @Override
-    public void onShowStores(ArrayList<Store> stores) {
-
-    }
-
-    @Override
     public void setRefreshing(Boolean refreshing) {
         swipe.setRefreshing(refreshing);
     }
 
-    protected RectF mOnValueSelectedRectF = new RectF();
-
-    public void onShowReport(ArrayList<ConversionData> data) {
+     public void onShowReport(ArrayList<ConversionData> data) {
 
         empty.setVisibility(GONE);
         if (data.size() > 0) {
 
-            chart.init(generateBarData(conversionData.storeTitle, data));
+            chart.init(generateBarData(presenter.getConversionData().storeTitle, data));
             chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
                 @Override
                 public void onValueSelected(Entry e, Highlight h) {
@@ -199,6 +171,7 @@ public class ConversionDailyFragment extends BaseFragment implements ConversionV
     public String tag() {
         return TAG;
     }
+
     private BarData generateBarData(String name, ArrayList<ConversionData> conversionData) {
 
         ArrayList<BarEntry> entries = new ArrayList<BarEntry>();

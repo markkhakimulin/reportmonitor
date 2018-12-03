@@ -1,14 +1,10 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.mvp;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpResponseException;
-import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.text.DateFormat;
@@ -24,14 +20,12 @@ import java.util.concurrent.Callable;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
-import ru.bashmag.khakimulin.reportmonitor.screens.reportlist.ReportListActivity;
-import ru.bashmag.khakimulin.reportmonitor.screens.reportlist.list.ReportItem;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportData;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
+import ru.bashmag.khakimulin.reportmonitor.utils.Dummy;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 import rx.Observable;
 
@@ -90,7 +84,7 @@ public class TurnoverModel {
             return Observable.fromCallable(new Callable<ArrayList<TurnoverReportData>>() {
                 @Override
                 public ArrayList<TurnoverReportData> call() throws Exception {
-                    return Utils.turnoverDummyContent();
+                    return Dummy.turnoverDummyContent();
                 }
             });
         }

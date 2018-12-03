@@ -105,10 +105,6 @@ public class SalesReportActivity extends BaseActivity{
         salesPresenter.refresh();
     }
 
-    @Override
-    public void saveSharedPreference(int type, String title, long startDate, long finishDate, ArrayList<String> chosenStoreList) {
-
-    }
 
     @Override
     protected void resolveDaggerDependency() {

@@ -46,16 +46,6 @@ public class ConversionModel {
 
     }
 
-    Observable<ArrayList<Store>> getStores() {
-     return Observable.fromCallable(new Callable<ArrayList<Store>>() {
-
-         @Override
-         public ArrayList<Store> call() throws Exception {
-             return (ArrayList<Store>) db.storeDao().getAll();
-         }
-     });
-    }
-
     Observable<ArrayList<ConversionData>> getConversion(Date startDate,Date finishDate,List<String> stores,String soapMethod) {
 
         return Observable.fromCallable(new Callable<ArrayList<ConversionData>>() {

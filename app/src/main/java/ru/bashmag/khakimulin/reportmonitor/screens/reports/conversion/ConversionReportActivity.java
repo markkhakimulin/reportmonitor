@@ -1,15 +1,12 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.view.Menu;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -17,15 +14,14 @@ import ru.bashmag.khakimulin.reportmonitor.App;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseActivity;
 import ru.bashmag.khakimulin.reportmonitor.core.di.HasComponent;
-import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.di.ConversionComponent;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.di.ConversionModule;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.di.DaggerConversionComponent;
+import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionDailyFragment;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionListFragment;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionView;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
-import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
 
 /**
  * Created by Mark Khakimulin on 02.10.2018.
@@ -36,18 +32,15 @@ import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
 
 public class ConversionReportActivity extends BaseActivity  implements HasComponent<ConversionComponent> {
 
-    @Inject
-    Context context;
-
-    @Inject
-    public ConversionPresenter presenter;
-
-    @Inject
-    SharedPreferences preferences;
-
-    ConversionView fragment;
 
     private ConversionComponent conversionComponent;
+    @Inject
+    public ConversionPresenter conversionPresenter;
+    public ConversionView fragment;
+    @Inject
+    Resources rs;
+
+    public Constants.ReportType type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +51,36 @@ public class ConversionReportActivity extends BaseActivity  implements HasCompon
 
             Constants.ReportType type = (Constants.ReportType) getIntent().getSerializableExtra(Constants.ReportType.class.getCanonicalName());
 
-            addFragment(ConversionListFragment.newInstance(type),false,ConversionListFragment.TAG);
+            if (getIntent().getAction() != null && getIntent().getAction().contentEquals("ref")) {
 
-            if (type == Constants.ReportType.conversion) {
-                setTitle(R.string.conversion_report_activity_name);
+                ConversionData conversionData = getIntent().getParcelableExtra(ConversionData.class.getCanonicalName());
+                conversionPresenter.setConversionData(conversionData);
+                addFragment(ConversionDailyFragment.newInstance(conversionData,type),false,ConversionDailyFragment.TAG);
+
             } else {
-                setTitle(R.string.fullness_report_activity_name);
+                addFragment(ConversionListFragment.newInstance(type),false,ConversionListFragment.TAG);
             }
         }
+        conversionPresenter.onCreate();
+        invalidate();
+    }
 
+    public void invalidate() {
+        String stringBuilder = rs.getString(presenter.getTitle(type)) +
+                presenter.generatePeriodTitle(new SimpleDateFormat(Constants.FORMATDATE, Locale.getDefault()));
+        setTitle(stringBuilder);
     }
 
     public void addFragment(ConversionView fragment,Boolean addToBackStack,String tag) {
         if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
             this.fragment = fragment;
             super.addFragment(R.id.fragmentContainer, fragment, addToBackStack);
+        }
+    }
+    public void replaceFragment(ConversionView fragment,Boolean addToBackStack,String tag) {
+        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+            this.fragment = fragment;
+            super.replaceFragment(R.id.fragmentContainer, fragment, addToBackStack);
         }
     }
 
@@ -91,15 +99,25 @@ public class ConversionReportActivity extends BaseActivity  implements HasCompon
 
         super.onDestroy();
         presenter.onDestroy();
+        if (fragment != null) {
+            fragment.onDestroy();
+        }
+
     }
 
     @Override
     protected void resolveDaggerDependency() {
 
-        conversionComponent = DaggerConversionComponent.builder().appComponent(App.getAppComponent())
-                .conversionModule(new ConversionModule(this)).build();
+        conversionComponent = DaggerConversionComponent.builder()
+                .appComponent(App.getAppComponent())
+                .conversionModule(new ConversionModule(this, startDate, finishDate, userId, chosenStoreList)).build();
         conversionComponent.inject(this);
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.reports, menu);
+        return true;
     }
 
     @Override
@@ -113,9 +131,9 @@ public class ConversionReportActivity extends BaseActivity  implements HasCompon
         return conversionComponent;
     }
 
-    public void onShowStores(ArrayList<Store> stores) {
-        fragment.onShowStores(stores);
-    }
+    public void saveSharedPreference(int type, String title, long startDate, long finishDate, ArrayList<String> arrayList) { }
+
+
     public void setRefreshing(Boolean refreshing) {
         fragment.setRefreshing(refreshing);
     }

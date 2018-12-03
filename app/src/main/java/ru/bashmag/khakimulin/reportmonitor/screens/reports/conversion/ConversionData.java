@@ -2,8 +2,8 @@ package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,18 +12,44 @@ import java.util.Date;
  */
 public class ConversionData implements Parcelable{
 
-    public Date date;
-    public int visitors;
+    public static final Creator<ConversionData> CREATOR = new Creator<ConversionData>() {
+        public ConversionData createFromParcel(Parcel in) {
+            return new ConversionData(in);
+        }
+
+        public ConversionData[] newArray(int size) {
+            return new ConversionData[size];
+        }
+    };
     public int cheques;
+    public Date date;
     public int items;
     public String storeId;
     public String storeTitle;
+    public int visitors;
 
     public ConversionData() {
+        this.visitors = 0;
+        this.cheques = 0;
+        this.items = 0;
     }
 
+    private ConversionData(Parcel in) {
+        this.visitors = 0;
+        this.cheques = 0;
+        this.items = 0;
+        this.date = new Date(in.readLong());
+        this.visitors = in.readInt();
+        this.cheques = in.readInt();
+        this.items = in.readInt();
+        this.storeId = in.readString();
+        this.storeTitle = in.readString();
+    }
 
-    public ConversionData(String storeId,String storeTitle,int visitors,int cheques,int items,Date date) {
+    public ConversionData(String storeId, String storeTitle, int visitors, int cheques, int items, Date date) {
+        this.visitors = 0;
+        this.cheques = 0;
+        this.items = 0;
         this.storeId = storeId;
         this.storeTitle = storeTitle;
         this.visitors = visitors;
@@ -36,34 +62,23 @@ public class ConversionData implements Parcelable{
         return 0;
     }
 
+    public boolean isEmpty() {
+
+        if (!TextUtils.isEmpty(this.storeId)) {
+            if (this.cheques != 0 || this.visitors != 0 || this.items != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(date.getTime());
-        out.writeInt(visitors);
-        out.writeInt(cheques);
-        out.writeInt(items);
-        out.writeString(storeId);
-        out.writeString(storeTitle);
+        out.writeLong(this.date.getTime());
+        out.writeInt(this.visitors);
+        out.writeInt(this.cheques);
+        out.writeInt(this.items);
+        out.writeString(this.storeId);
+        out.writeString(this.storeTitle);
     }
-
-    public static final Parcelable.Creator<ConversionData> CREATOR
-            = new Parcelable.Creator<ConversionData>() {
-        public ConversionData createFromParcel(Parcel in) {
-            return new ConversionData(in);
-        }
-
-        public ConversionData[] newArray(int size) {
-            return new ConversionData[size];
-        }
-    };
-
-    private ConversionData(Parcel in) {
-        date = new Date(in.readLong());
-        visitors= in.readInt();
-        cheques= in.readInt();
-        items= in.readInt();
-        storeId = in.readString();
-        storeTitle = in.readString();
-    }
-
 
 }

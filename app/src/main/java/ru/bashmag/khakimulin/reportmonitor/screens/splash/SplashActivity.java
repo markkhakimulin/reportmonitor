@@ -2,11 +2,22 @@ package ru.bashmag.khakimulin.reportmonitor.screens.splash;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
+import android.transition.Fade;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -14,32 +25,19 @@ import butterknife.BindView;
 import ru.bashmag.khakimulin.reportmonitor.App;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseActivity;
+import ru.bashmag.khakimulin.reportmonitor.screens.login.LoginActivity;
+import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.splash.di.DaggerSplashComponent;
 import ru.bashmag.khakimulin.reportmonitor.screens.splash.di.SplashModule;
 import ru.bashmag.khakimulin.reportmonitor.screens.splash.mvp.SplashPresenter;
-import ru.bashmag.khakimulin.reportmonitor.screens.reportlist.ReportListActivity;
+import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class SplashActivity extends BaseActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
 
@@ -90,6 +88,15 @@ public class SplashActivity extends BaseActivity {
     @BindView(R.id.text_status_splash)
     TextView textStatus;
 
+    @BindView(R.id.button_repeat)
+    Button button;
+
+    @BindView(R.id.image_logo)
+    ImageView logo;
+
+    @BindView(R.id.preloader)
+    ProgressBar progressBar;
+
     @Inject
     SplashPresenter splashPresenter;
 
@@ -131,18 +138,73 @@ public class SplashActivity extends BaseActivity {
         return R.layout.activity_splash;
     }
 
-
-    public void showReportListActivity() {
-        Intent i = new Intent(this, ReportListActivity.class);
-        startActivity(i);
-        finish();
+    protected void invalidate() {
+        this.mControlsView.setVisibility(View.VISIBLE);
+        this.progressBar.setVisibility(View.VISIBLE);
+        this.button.setVisibility(View.GONE);
     }
 
+    public void showButton() {
+        this.progressBar.setVisibility(View.GONE);
+        this.button.setVisibility(View.VISIBLE);
+    }
+
+    public void showLoginActivity() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i, ActivityOptionsCompat.makeSceneTransitionAnimation(this, logo,
+                Objects.requireNonNull(ViewCompat.getTransitionName(logo))).toBundle());
+    }
+
+    public void showReportListActivity() {
+        String userId = this.sp.getString(Constants.USER_ID_PREFERENCES, Constants.EMPTY_ID);
+        String userTitle = this.sp.getString(Constants.USER_TITLE_PREFERENCES, getString(R.string.anonymous));
+        if (userId.equalsIgnoreCase(Constants.EMPTY_ID)) {
+            showLoginActivity();
+            return;
+        }
+        Intent i = new Intent(this, TurnoverReportActivity.class);
+        i.putExtra(Constants.USER_ID, userId);
+        i.putExtra(Constants.USER_TITLE, userTitle);
+        startActivity(i);
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         splashPresenter.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidate();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.splashPresenter.refresh();
+    }
+
+    public void saveSharedPreference(int type,
+                                     String title,
+                                     long startDate,
+                                     long finishDate,
+                                     ArrayList<String> arrayList) {
+
+    }
+
+    public void setStatus(String state) {
+        this.textStatus.setText(state);
+    }
+
+    protected void setupWindowAnimations() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            Fade fade = new Fade();
+            fade.setDuration(getResources().getInteger(R.integer.fade_time));
+            getWindow().setExitTransition(fade);
+        }
     }
 
     private void toggle() {

@@ -1,17 +1,13 @@
 package ru.bashmag.khakimulin.reportmonitor.utils;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,6 +71,16 @@ public class Utils {
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
+
+    public static int getDaysCount(Date date1, Date date2) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(9, 1);
+        calendar.setTime(date1);
+        int days1 = calendar.get(6);
+        calendar.setTime(date2);
+        return Math.abs(days1 - calendar.get(6));
+    }
+
     public static int getColorWrapper(Context context, int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.getColor(id);
@@ -83,5 +89,6 @@ public class Utils {
             return context.getResources().getColor(id);
         }
     }
+
 
 }

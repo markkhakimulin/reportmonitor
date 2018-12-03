@@ -1,8 +1,10 @@
 package ru.bashmag.khakimulin.reportmonitor.db.tables;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Mark Khakimulin on 28.09.2018.
@@ -11,18 +13,21 @@ import android.support.annotation.NonNull;
 @Entity
 public class Store {
 
-    @NonNull
-    @PrimaryKey
-    public String id;
-
+    public int actual;
     public String code;
-
     public String description;
-
+    @PrimaryKey
+    @NonNull
+    public String id;
+    public long last;
+    @Nullable
+    public long loaded;
     public int marked;
+    public long unloaded;
+    @ColumnInfo(name = "user_id")
+    public String userId;
 
-    @Override
     public String toString() {
-        return description;
+        return this.description;
     }
 }

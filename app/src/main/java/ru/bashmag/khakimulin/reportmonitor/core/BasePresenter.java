@@ -38,7 +38,19 @@ import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
  * Email : mark.khakimulin@gmail.com
  */
 public abstract class BasePresenter {
-    protected Date startDate,finishDate;
+    private BaseActivity baseView;
+    protected ArrayList<String> chosenStoreList;
+    protected DB db;
+    protected Date finishDate;
+    protected String periodTitle;
+    protected int periodType;
+    protected RxSchedulers rxSchedulers;
+    protected Date startDate;
+    protected String storeId;
+    protected CompositeSubscription subscriptions;
+    private HashMap<Constants.ReportType, Integer> titles = new HashMap();
+    protected String userId;
+    protected String userTitle;
 
     public int getPeriodType() {
         return periodType;
@@ -56,27 +68,16 @@ public abstract class BasePresenter {
         this.periodTitle = periodTitle;
     }
 
-    protected int periodType;
-    protected String periodTitle;
-
     public void setLocalChosenStoreList(ArrayList<String> chosenStoreList) {
         this.chosenStoreList = chosenStoreList;
     }
 
-    protected ArrayList<String> chosenStoreList;
-    protected String userId,userTitle,storeId;
-    protected CompositeSubscription subscriptions;
-    protected DB db;
-    private BaseActivity baseView;
-    protected RxSchedulers rxSchedulers;
-    private HashMap<Constants.ReportType,Integer> titles;
 
     public BasePresenter(DB db, CompositeSubscription subscriptions, RxSchedulers rxSchedulers,BaseActivity baseView) {
         this.db = db;
         this.subscriptions = subscriptions;
         this.rxSchedulers = rxSchedulers;
         this.baseView = baseView;
-        titles = new HashMap<>();
         titles.put(Constants.ReportType.fullness, R.string.fullness_report_activity_name);
         titles.put(Constants.ReportType.conversion, R.string.conversion_report_activity_name);
         titles.put(Constants.ReportType.sales, R.string.sales_report_activity_name);
@@ -85,7 +86,7 @@ public abstract class BasePresenter {
 
     public String generatePeriodTitle(DateFormat df) throws NullPointerException {
         assert startDate != null && finishDate != null;
-        return " ("+df.format(startDate)+" - "+df.format(finishDate)+")";
+        return String.format("( %s - %s)", df.format(startDate),df.format(finishDate));
     }
 
     public int getTitle(Constants.ReportType type) {
@@ -119,10 +120,10 @@ public abstract class BasePresenter {
 
     protected Subscription getStoreList() {
 
-        return getStores().subscribeOn(rxSchedulers.runOnBackground())
+        return getStores()
+            .subscribeOn(rxSchedulers.runOnBackground())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(stores -> {
-                        System.out.println("processing ending on thread" + Thread.currentThread().getName());
                         baseView.onShowStores(stores);
                     }, Utils::handleThrowable
             );
@@ -130,7 +131,7 @@ public abstract class BasePresenter {
     }
     protected void processThrow(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException) {
-            baseView.showYesNoMessageDialog("Ошибка подключения"
+            baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
                     , "Необходимо подключение VPN. Открыть сетевые настройки?"
                     , new Func0<Void>() {
                         @Override
@@ -145,7 +146,7 @@ public abstract class BasePresenter {
                     , null
                     , null);
         } else if (throwable instanceof ConnectException) {
-            baseView.showYesNoMessageDialog("Ошибка интернет соединения"
+            baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
                     ,"Необходимо подключение к сети. Открыть сетевые настройки?"
                     , new Func0<Void>() {
                         @Override
@@ -155,7 +156,7 @@ public abstract class BasePresenter {
                         }
                     },null);
         } else {
-            baseView.showYesNoMessageDialog("Ошибка загрузки данных"
+            baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_loading)
                     , throwable.getMessage()
                     , null
                     , null);
@@ -212,8 +213,6 @@ public abstract class BasePresenter {
     public String getUserTitle() {
         return this.userTitle;
     }
-
-
     public void setStoreId(String storeId) {
         this.storeId = storeId;
     }

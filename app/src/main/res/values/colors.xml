@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ee811c</color>
 
+    <color name="colorRight">#c8137c00</color>
+    <color name="colorWrong">#c8ba1c00</color>
+    <color name="colorGray">#11000000</color>
     <!--<color name="black_overlay">#ee811c</color>-->
 </resources>

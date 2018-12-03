@@ -15,4 +15,6 @@
     <dimen name="normal_text_size">15sp</dimen>
     <dimen name="small_text_size">10sp</dimen>
     <dimen name="default_data_set_text_size">6sp</dimen>
+    <dimen name="logo_img">150dp</dimen>
+
 </resources>

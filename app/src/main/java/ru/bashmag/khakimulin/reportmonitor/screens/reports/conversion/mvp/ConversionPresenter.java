@@ -1,23 +1,20 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.Callable;
 
+import ru.bashmag.khakimulin.reportmonitor.R;
+import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
+import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionReportActivity;
+import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionListFragment;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
-import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
 import rx.Observable;
 import rx.Subscription;
@@ -30,77 +27,69 @@ import rx.subscriptions.CompositeSubscription;
  * Created by Mark Khakimulin on 01.10.2018.
  * Email : mark.khakimulin@gmail.com
  */
-public class ConversionPresenter {
+public class ConversionPresenter  extends BasePresenter {
 
+    private ConversionData conversionData;
     private ConversionModel model;
-    private RxSchedulers rxSchedulers;
-    private CompositeSubscription subscriptions;
     private ConversionReportActivity view;
 
 
-    public ConversionPresenter(ConversionModel model, ConversionReportActivity view, RxSchedulers schedulers, CompositeSubscription subscriptions) {
+    public ConversionPresenter(DB db, ConversionModel model, ConversionReportActivity view, RxSchedulers schedulers, CompositeSubscription subscriptions) {
+        super(db, subscriptions, schedulers, view);
         this.model = model;
-        this.rxSchedulers = schedulers;
-        this.subscriptions = subscriptions;
         this.view = view;
-
-    }
-    /**
-     * Called when the fragment has been refreshed by user from  {@link ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionListFragment}
-     * @param startDate start report date , non-null
-     * @param finishDate finish report date , non-null
-     * @param stores selected store ids, if null - all stores id.
-     *
-     * @return Observable{@link ArrayList<ConversionData>}
-     */
-    public void refresh(Date startDate,Date finishDate,List<String> stores) {
-        subscriptions.add(getConversion(startDate,finishDate,stores,Constants.SOAP_METHOD_GET_CONVERSION));
-    }
-    /**
-     * Called when the fragment has been refreshed by user from  {@link ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.ConversionListFragment}
-     * @param startDate start hour of date , non-null
-     * @param finishDate finish hour of date , non-null
-     * @param stores selected store id, not null - only single element in list.
-     *
-     * @return Observable{@link ArrayList<ConversionData>}
-     */
-    public void refreshDaily(Date startDate,Date finishDate,List<String> stores) {
-        subscriptions.add(getConversion(startDate,finishDate,stores,Constants.SOAP_METHOD_GET_CONVERSION_DAILY));
     }
 
-    public void onDestroy() {
-        subscriptions.clear();
+    @Override
+    public void refresh() {
+        refreshByMethod(Constants.SOAP_METHOD_GET_CONVERSION);
     }
 
-    public void showStoreList(ArrayList<String> chosenStores) {
-
-        subscriptions.add(getStoreList(chosenStores));
+    public void refreshDaily() {
+        refreshByMethod(Constants.SOAP_METHOD_GET_CONVERSION_DAILY);
     }
 
-    private Subscription getStoreList(ArrayList<String> chosenStores) {
+    private void refreshByMethod(String method) {
+        if (getStartDate() == null || getFinishDate() == null) {
+            view.setRefreshing(false);
+            view.onShowToast(view.getString(R.string.on_error_chosen_period));
+            return;
+        }
 
-        return Observable.just(true)
-            .flatMap(new Func1<Object, Observable<ArrayList<Store>>>() {
-                @Override
-                public Observable<ArrayList<Store>> call(Object empty) {
-                    return model.getStores();
-                }
-            })
-            .subscribeOn(rxSchedulers.runOnBackground())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(stores -> {
-                System.out.println("processing ending on thread" + Thread.currentThread().getName());
-                if (chosenStores != null) {
-                    for (Store store : stores) {
-                        if (chosenStores.contains(store.id)) {
-                            store.marked = 1;
-                        }
+        if (getChosenStoreIds().size() == 0) {
+            view.setRefreshing(false);
+            view.onShowToast(view.getString(R.string.on_error_chosen_stores));
+            return;
+        }
+        subscriptions.add(getConversion(startDate,finishDate,getChosenStoreIds(),method));
+    }
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    protected Subscription getStoreList() {
+        return getStores(chosenStoreList)
+                .subscribeOn(rxSchedulers.runOnBackground())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1() {
+                    @Override
+                    public void call(Object stores) {
+                        view.onShowStores((ArrayList<Store>)stores);
                     }
-                }
-                view.onShowStores(stores);
-            }, Utils::handleThrowable
-        );
+                });
+    }
 
+    private Observable getStores(final ArrayList<String> storeIds) {
+        return Observable.fromCallable(new Callable<ArrayList<Store>>() {
+            public ArrayList<Store> call() throws Exception {
+                if (ConversionPresenter.this.userId.equals(Constants.EMPTY_ID)) {
+                    return (ArrayList<Store>) db.chosenStoreDao().getAllByIdsByAnonymous(storeIds);
+                }
+                return (ArrayList<Store>) db.chosenStoreDao().getAllByIdsByUserId(userId, storeIds);
+            }
+        });
     }
 
     private Subscription getConversion(Date startDate,Date finishDate,List<String> stores,String method) {
@@ -137,6 +126,32 @@ public class ConversionPresenter {
             view.showMessage(throwable.getMessage());
         });
     }
+
+    public void replaceAndRefresh() {
+        view.replaceFragment(ConversionListFragment.newInstance(view.type), Boolean.valueOf(false), ConversionListFragment.TAG);
+        view.invalidate();
+    }
+
+    public ArrayList<String> getChosenStoreIds() {
+        return this.chosenStoreList;
+    }
+
+    public ConversionData getConversionData() {
+        return this.conversionData;
+    }
+
+    public void setChosenStore(String storeId) {
+        if (this.chosenStoreList.contains(storeId)) {
+            this.chosenStoreList.remove(storeId);
+        } else {
+            this.chosenStoreList.add(storeId);
+        }
+    }
+
+    public void setConversionData(ConversionData conversionData) {
+        this.conversionData = conversionData;
+    }
+
 
 
 

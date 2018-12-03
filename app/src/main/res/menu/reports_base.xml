@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/filter"
         android:icon="@drawable/ic_action_filter"
+        android:id="@+id/action_filter"
         android:title="@string/action_reports_filter"
         app:showAsAction="ifRoom|collapseActionView">
         <menu>
@@ -12,30 +11,47 @@
                 android:id="@+id/action_stores_filter"
                 android:title="@string/action_reports_stores_filter" />
         </menu>
-
     </item>
     <item
-        android:id="@+id/action_period"
         android:icon="@drawable/ic_action_period"
+        android:id="@+id/action_period"
         android:title="@string/action_reports_period"
         app:showAsAction="ifRoom|collapseActionView">
         <menu>
             <item
-                android:id="@+id/action_period_today_filter"
                 android:icon="@drawable/ic_action_period_today_filter"
+                android:id="@+id/action_period_today_filter"
                 android:title="@string/action_period_today_filter" />
             <item
-                android:id="@+id/action_period_week_filter"
                 android:icon="@drawable/ic_action_period_week_filter"
+                android:id="@+id/action_period_week_filter"
                 android:title="@string/action_period_week_filter" />
             <item
-                android:id="@+id/action_period_month_filter"
                 android:icon="@drawable/ic_action_period_month_filter"
+                android:id="@+id/action_period_month_filter"
                 android:title="@string/action_period_month_filter" />
             <item
-                android:id="@+id/action_custom_period_filter"
                 android:icon="@drawable/ic_action_custom_period_filter"
+                android:id="@+id/action_custom_period_filter"
                 android:title="@string/action_custom_period_filter" />
         </menu>
     </item>
+    <item
+        android:icon="@drawable/ic_info"
+        android:id="@+id/about"
+        android:title="@string/action_info_about"
+        app:showAsAction="ifRoom|collapseActionView">
+    <menu>
+        <item
+            android:id="@+id/action_version"
+            android:title="@string/action_info_version" />
+        <item
+            android:id="@+id/action_about"
+            android:title="@string/action_info_about" />
+    </menu>
+    </item>
+    <item
+        android:id="@+id/exit"
+        android:title="@string/action_exit"
+        app:showAsAction="collapseActionView" />
 </menu>

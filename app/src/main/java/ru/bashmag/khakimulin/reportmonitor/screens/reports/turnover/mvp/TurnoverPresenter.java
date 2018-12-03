@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverData;
@@ -66,10 +67,15 @@ public class TurnoverPresenter extends BasePresenter {
 
         if (chosenStoreIds.size() == 0) {
             view.setRefreshing(false);
-            view.onShowToast("Не выбрано ни одного магазина");
+            view.onShowToast(view.getString(R.string.on_error_chosen_stores));
             return;
         }
-        //subscriptions.add(updateExchangeStatuses(chosenStoreIds));
+
+        if (getStartDate() == null || getFinishDate() == null) {
+            view.setRefreshing(false);
+            view.onShowToast(view.getString(R.string.on_error_chosen_period));
+            return;
+        }
         subscriptions.add(getReportList(startDate,finishDate,chosenStoreIds));
     }
 
