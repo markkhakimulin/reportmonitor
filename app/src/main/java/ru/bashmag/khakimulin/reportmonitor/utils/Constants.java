@@ -24,8 +24,6 @@ public class Constants {
     public static final String GROUP = "ItemGroup";
     public static final String ID = "ID";
     public static final String ITEMS = "Items";
-    public static final String FINISHDATE = "PERIOD_FINISH_DATE";
-    public static final String STARTDATE = "PERIOD_START_DATE";
     public static final String PERIOD_FINISHDATE = "PERIOD_FINISHDATE_PREF";
     public static final String PERIOD_STARTDATE = "PERIOD_STARTDATE_PREF";
     public static final String PERIOD_TITLE_PREFERENCES = "PERIOD_TITLE_PREF";
@@ -60,6 +58,7 @@ public class Constants {
     public static final String RESULT = "Result";
     public static final String STORELIST = "StoreList";
     public static final String EXCHANGESTATUSLIST = "ExchangeStatusList";
+    public static final String EmptyField = "anyType{}";
 
     public enum ReportType {
         conversion,

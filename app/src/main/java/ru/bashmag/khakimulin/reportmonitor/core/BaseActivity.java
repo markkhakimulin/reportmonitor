@@ -63,33 +63,29 @@ public abstract class BaseActivity extends AppCompatActivity
                     CalendarPickerView.OnInvalidDateSelectedListener,
                    DialogInterface.OnShowListener{
 
-    protected Unbinder binder;
-    protected ArrayList<String> chosenStoreList;
-    protected DateFormat dateFormat = new SimpleDateFormat(Constants.FORMATDATE, Locale.getDefault());
-    protected Date finishDate;
-    protected String finishDateTitle;
-    protected ProgressDialog mProgressDialog;
     @Inject
     public BasePresenter presenter;
     @Inject
     public SharedPreferences sp;
-    protected Date startDate;
-    protected String startDateTitle;
-    protected StoresAdapter storesAdapter;
     @Inject
-    public CompositeSubscription subscriptions;
+    protected CompositeSubscription subscriptions;
+
+    protected Unbinder binder;
+    protected ArrayList<String> chosenStoreList;
+    protected DateFormat dateFormat = new SimpleDateFormat(Constants.FORMATDATE, Locale.getDefault());
+    protected Date finishDate,startDate,previousDate = null;
+    protected ProgressDialog mProgressDialog;
+    protected StoresAdapter storesAdapter;
     protected String userId;
     protected String userTitle;
-
     protected CalendarPickerView dialogView;
-    protected Date previousDate = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startDate = new Date(getIntent().getLongExtra(Constants.STARTDATE,0));
-        finishDate = new Date(getIntent().getLongExtra(Constants.FINISHDATE,0));
+        startDate = new Date(getIntent().getLongExtra(Constants.PERIOD_STARTDATE,0));
+        finishDate = new Date(getIntent().getLongExtra(Constants.PERIOD_FINISHDATE,0));
         chosenStoreList = getIntent().getStringArrayListExtra(Constants.CHOSEN_STORES);
         if (getIntent().hasExtra(Constants.USER_ID)) {
             userId = getIntent().getStringExtra(Constants.USER_ID);
@@ -519,12 +515,16 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     public void showStores() {
-        View view = LayoutInflater.from(this).inflate(R.layout.store_list_dialog, null, false);
-        ((ListView) view.findViewById(R.id.list)).setAdapter(this.storesAdapter);
-        new AlertDialog.Builder(this).setTitle(getString(R.string.dialog_choose_store_title)).setView(view).setNeutralButton("\u0417\u0430\u043a\u0440\u044b\u0442\u044c", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
+        //ListView view = (ListView)LayoutInflater.from(this).inflate(R.layout.store_list_dialog, null, false);
+        //view.setAdapter(storesAdapter);
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_choose_store_title))
+                .setAdapter(storesAdapter,null)
+                //.setView(view)
+                .setNeutralButton("Закрыть", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
         }).create().show();
     }
 

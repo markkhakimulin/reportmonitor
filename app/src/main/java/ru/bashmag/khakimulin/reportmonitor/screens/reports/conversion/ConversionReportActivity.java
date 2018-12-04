@@ -49,7 +49,7 @@ public class ConversionReportActivity extends BaseActivity  implements HasCompon
 
         if (getIntent().hasExtra(Constants.ReportType.class.getCanonicalName())) {
 
-            Constants.ReportType type = (Constants.ReportType) getIntent().getSerializableExtra(Constants.ReportType.class.getCanonicalName());
+            type = (Constants.ReportType) getIntent().getSerializableExtra(Constants.ReportType.class.getCanonicalName());
 
             if (getIntent().getAction() != null && getIntent().getAction().contentEquals("ref")) {
 

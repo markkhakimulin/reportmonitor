@@ -71,7 +71,9 @@ public class SplashModel {
                 SoapObject response = (SoapObject) envelope.getResponse();
                 SoapObject exchangeStatusList = (SoapObject)response.getProperty(Constants.EXCHANGESTATUSLIST);
                 if (response.hasProperty(Constants.ERROR)) {
-                    errorMessage = response.getPropertyAsString(Constants.ERROR);
+                    if (!response.getPropertyAsString(Constants.ERROR).contentEquals(Constants.EmptyField)) {
+                        errorMessage = response.getPropertyAsString(Constants.ERROR);
+                    }
                 }
 
                 int count = exchangeStatusList.getPropertyCount();
@@ -85,17 +87,6 @@ public class SplashModel {
                 SimpleDateFormat format = new SimpleDateFormat(FORMATDATE_FROM_1C, Locale.getDefault());
                 Long currentTime = Calendar.getInstance().getTimeInMillis();
 
-
-                db.beginTransaction();
-
-                try {
-
-
-                    db.setTransactionSuccessful();
-                }catch (Exception e) {
-                    db.endTransaction();
-                }
-
                 for (int i = 0; i < count; i++) {
 
                     SoapObject so = (SoapObject) exchangeStatusList.getProperty(i);
@@ -104,9 +95,9 @@ public class SplashModel {
                     store.id = storeObject.getPropertyAsString(Constants.ID);
                     store.code = storeObject.getPropertyAsString(Constants.CODE);
                     store.description = storeObject.getPropertyAsString(Constants.DESCRIPTION);
-                    Date lastExchange = format.parse(storeObject.getPropertyAsString(Constants.DATE));
-                    Date lastLoad = format.parse(storeObject.getPropertyAsString(Constants.DATE_LOAD));
-                    Date lastUnLoad = format.parse(storeObject.getPropertyAsString(Constants.DATE_UNLOAD));
+                    Date lastExchange = format.parse(so.getPropertyAsString(Constants.DATE));
+                    Date lastLoad = format.parse(so.getPropertyAsString(Constants.DATE_LOAD));
+                    Date lastUnLoad = format.parse(so.getPropertyAsString(Constants.DATE_UNLOAD));
 
 
                     Long loadTime = (currentTime - lastLoad.getTime())/3600000;
@@ -151,7 +142,9 @@ public class SplashModel {
                 SoapObject response = (SoapObject) envelope.getResponse();
                 SoapObject userList = (SoapObject) response.getProperty(Constants.USERLIST);
                 if (response.hasProperty(Constants.ERROR)) {
-                    errorMessage = response.getPropertyAsString(Constants.ERROR);
+                    if (!response.getPropertyAsString(Constants.ERROR).contentEquals(Constants.EmptyField)) {
+                        errorMessage = response.getPropertyAsString(Constants.ERROR);
+                    }
                 }
 
                 int count = userList.getPropertyCount();
@@ -171,9 +164,9 @@ public class SplashModel {
                         }
 
                         User user = new User();
-                        user.id = userList.getPropertyAsString(Constants.ID);
-                        user.code = userList.getPropertyAsString(Constants.CODE);
-                        user.description = userList.getPropertyAsString(Constants.DESCRIPTION);
+                        user.id = prop.getPropertyAsString(Constants.ID);
+                        user.code = prop.getPropertyAsString(Constants.CODE);
+                        user.description = prop.getPropertyAsString(Constants.DESCRIPTION);
 
                         if (!userIds.isEmpty() && userIds.contains(id)) {
                             db.userDao().update(user);

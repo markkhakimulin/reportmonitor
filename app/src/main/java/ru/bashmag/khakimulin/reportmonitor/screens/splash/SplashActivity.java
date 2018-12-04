@@ -8,7 +8,9 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
+import android.transition.ChangeImageTransform;
 import android.transition.Fade;
+import android.transition.TransitionSet;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -117,6 +119,13 @@ public class SplashActivity extends BaseActivity {
             }
         });
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invalidate();
+                splashPresenter.refresh();
+            }
+        });
         splashPresenter.onCreate();
     }
 
@@ -135,7 +144,6 @@ public class SplashActivity extends BaseActivity {
     }
 
     protected void invalidate() {
-        this.mControlsView.setVisibility(View.VISIBLE);
         this.progressBar.setVisibility(View.VISIBLE);
         this.button.setVisibility(View.GONE);
     }
@@ -179,7 +187,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        this.splashPresenter.refresh();
+        splashPresenter.refresh();
     }
 
     public void setStatus(String state) {
@@ -189,9 +197,12 @@ public class SplashActivity extends BaseActivity {
     protected void setupWindowAnimations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            TransitionSet set = new TransitionSet();
             Fade fade = new Fade();
             fade.setDuration(getResources().getInteger(R.integer.fade_time));
-            getWindow().setExitTransition(fade);
+            set.addTransition(new Fade());
+            set.addTransition(new ChangeImageTransform());
+            getWindow().setEnterTransition(set);
         }
     }
 
