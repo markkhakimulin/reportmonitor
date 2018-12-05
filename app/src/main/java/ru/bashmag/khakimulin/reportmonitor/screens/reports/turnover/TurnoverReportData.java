@@ -3,7 +3,6 @@ package ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 
 /**

@@ -14,12 +14,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.items.BarChartItem;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.items.ChartItem;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
-import rx.Observable;
-import rx.subjects.PublishSubject;
 
 public class ChartItemAdapter<T extends ChartItem> extends ArrayAdapter<T>{
 

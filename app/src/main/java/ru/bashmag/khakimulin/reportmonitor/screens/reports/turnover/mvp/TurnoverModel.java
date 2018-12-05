@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
@@ -27,7 +28,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverRepo
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Dummy;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_FROM_1C;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_TO_1C;
@@ -84,6 +84,7 @@ public class TurnoverModel {
             return Observable.fromCallable(new Callable<ArrayList<TurnoverReportData>>() {
                 @Override
                 public ArrayList<TurnoverReportData> call() throws Exception {
+                    Thread.sleep(1000);
                     return Dummy.turnoverDummyContent();
                 }
             });

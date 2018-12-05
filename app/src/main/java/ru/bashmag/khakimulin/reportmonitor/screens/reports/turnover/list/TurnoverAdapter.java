@@ -15,12 +15,12 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportData;
-import rx.Observable;
-import rx.subjects.PublishSubject;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;

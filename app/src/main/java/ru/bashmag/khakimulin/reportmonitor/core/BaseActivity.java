@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.squareup.timessquare.CalendarPickerView;
 import com.squareup.timessquare.DefaultDayViewAdapter;
 
+import org.reactivestreams.Subscription;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +43,11 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subscribers.DisposableSubscriber;
 import ru.bashmag.khakimulin.reportmonitor.BuildConfig;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
@@ -49,10 +56,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.fragments.
 import ru.bashmag.khakimulin.reportmonitor.core.list.StoresAdapter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.
@@ -68,7 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Inject
     public SharedPreferences sp;
     @Inject
-    protected CompositeSubscription subscriptions;
+    protected CompositeDisposable subscriptions;
 
     protected Unbinder binder;
     protected ArrayList<String> chosenStoreList;
@@ -387,7 +390,7 @@ public abstract class BaseActivity extends AppCompatActivity
      }
 
      @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+     public boolean onPrepareOptionsMenu(Menu menu) {
 
         int selectedPeriodType = sp.getInt(Constants.PERIOD_TYPE_PREFERENCES,0);
         MenuItem period = menu.findItem(R.id.action_period);
@@ -421,9 +424,10 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
-    protected Subscription respondToStoreFilterClick() {
-        return itemStoreClicks().subscribe(new Action1<String>() {
-            public void call(String storeId) {
+    protected Disposable respondToStoreFilterClick() {
+        return itemStoreClicks().subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String storeId) throws Exception {
                 changeChosenStore(storeId);
             }
         });

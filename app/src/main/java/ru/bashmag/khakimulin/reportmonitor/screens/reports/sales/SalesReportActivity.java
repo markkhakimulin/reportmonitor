@@ -15,16 +15,15 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.App;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseActivity;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.di.DaggerSalesComponent;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.di.SalesModule;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.list.SalesAdapter;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.mvp.SalesPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
-import rx.Observable;
 
 import static android.view.View.GONE;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE;

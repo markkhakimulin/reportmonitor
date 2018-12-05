@@ -49,7 +49,7 @@ public class AppModule {
     @AppScope
     @Provides
     DB provideDBHelper() {
-        return (DB) Room.databaseBuilder(this.mApplication, DB.class, Constants.DB).
+        return Room.databaseBuilder(this.mApplication, DB.class, Constants.DB).
                 allowMainThreadQueries().
                 fallbackToDestructiveMigration().
                 build();

@@ -12,15 +12,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.SalesData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.SalesReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverData;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportActivity;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportData;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
+import ru.bashmag.khakimulin.reportmonitor.utils.Dummy;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_FROM_1C;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_TO_1C;
@@ -63,57 +61,8 @@ public class SalesModel {
             return Observable.fromCallable(new Callable<ArrayList<SalesData>>() {
                 @Override
                 public ArrayList<SalesData> call() throws Exception {
-
-                    ArrayList<SalesData> list = new ArrayList<>();
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,new Date())}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    list.add(new SalesData("123123","Балашиха","Алеша","Продавец",new TurnoverData[]{
-                            new TurnoverData("123123","Балашиха",12234,13355,"Обувь"),
-                            new TurnoverData("123123","Балашиха",551,125,"Аксессуары"),
-                            new TurnoverData("123123","Балашиха",551,125,"Всякая хрень")}));
-                    return list;
+                    Thread.sleep(1000);
+                    return Dummy.salesDummyContent();
                 }
             });
         }

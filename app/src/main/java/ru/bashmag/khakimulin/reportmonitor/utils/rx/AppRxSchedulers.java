@@ -3,9 +3,9 @@ package ru.bashmag.khakimulin.reportmonitor.utils.rx;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.

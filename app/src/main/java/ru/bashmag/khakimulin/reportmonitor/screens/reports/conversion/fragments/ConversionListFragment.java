@@ -30,6 +30,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseFragment;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.data.ConversionBarData;
@@ -42,10 +45,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.list.Chart
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
 
 import static android.view.View.GONE;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE;
@@ -68,7 +67,7 @@ public class ConversionListFragment extends BaseFragment implements ConversionVi
     ConversionPresenter presenter;
 
     @Inject
-    CompositeSubscription subscriptions;
+    CompositeDisposable subscriptions;
     @Inject
     Resources resources;
 
@@ -151,17 +150,15 @@ public class ConversionListFragment extends BaseFragment implements ConversionVi
         return true;
     }
 
-    private Subscription respondToChartClick() {
-        return itemChartClicks().subscribe(new Action1<ConversionData>() {
-            public void call(ConversionData data) {
-                ConversionListFragment.this.presenter.setConversionData(data);
-                ConversionListFragment.this.presenter.setStartDate(data.date);
-                ConversionListFragment.this.presenter.setFinishDate(Utils.getEndOfADay(data.date));
-                ((ConversionReportActivity) Objects.requireNonNull(ConversionListFragment.this.getActivity()))
-                        .addFragment(ConversionDailyFragment.newInstance(data,type), true, ConversionDailyFragment.TAG);
-                ((ConversionReportActivity) Objects.requireNonNull(ConversionListFragment.this.getActivity()))
-                        .invalidate();
-            }
+    private Disposable respondToChartClick() {
+        return itemChartClicks().subscribe(data -> {
+            presenter.setConversionData(data);
+            presenter.setStartDate(data.date);
+            presenter.setFinishDate(Utils.getEndOfADay(data.date));
+            ((ConversionReportActivity) Objects.requireNonNull(ConversionListFragment.this.getActivity()))
+                    .addFragment(ConversionDailyFragment.newInstance(data,type), true, ConversionDailyFragment.TAG);
+            ((ConversionReportActivity) Objects.requireNonNull(ConversionListFragment.this.getActivity()))
+                    .invalidate();
         });
     }
 

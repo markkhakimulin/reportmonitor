@@ -16,7 +16,7 @@ import ru.bashmag.khakimulin.reportmonitor.db.tables.UserStore;
  * Created by Mark Khakimulin on 28.09.2018.
  * Email : mark.khakimulin@gmail.com
  */
-@Database(entities = {Store.class, User.class, ChosenStore.class, UserStore.class}, exportSchema = false, version = 8)
+@Database(entities = {Store.class, User.class, ChosenStore.class, UserStore.class}, exportSchema = false, version = 9)
 public abstract class DB extends RoomDatabase {
     public abstract UserChosenStoresDao chosenStoreDao();
 

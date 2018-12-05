@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.App;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BaseActivity;
@@ -33,7 +34,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.list.Turnove
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.mvp.TurnoverPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 import static android.view.View.GONE;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.CHOSEN_STORES;
@@ -173,20 +173,27 @@ public class TurnoverReportActivity extends BaseActivity {
         swipe.setRefreshing(refreshing);
     }
 
+
+    Intent getBaseIntent(Class view) {
+        Intent in = new Intent(this, ConversionReportActivity.class);
+        in.setAction("ref");
+        in.putExtra(Constants.PERIOD_STARTDATE,Utils.getStartOfADay(presenter.getFinishDate()).getTime());
+        in.putExtra(Constants.PERIOD_FINISHDATE,presenter.getFinishDate().getTime());
+        in.putExtra(Constants.USER_ID,presenter.getUserId());
+        in.putExtra(Constants.USER_TITLE,presenter.getUserTitle());
+        return in;
+    }
+
     public void gotoConversion(ConversionData data) {
 
         if (data.isEmpty()) return;
 
+
+        Intent in = getBaseIntent(ConversionReportActivity.class);
+        in.putExtra(Constants.ReportType.class.getCanonicalName(),Constants.ReportType.conversion);
+        in.putExtra(ConversionData.class.getCanonicalName(),data);
         ArrayList<String> hashSet = new ArrayList<>();
         hashSet.add(data.storeId);
-        Intent in = new Intent(this, ConversionReportActivity.class);
-        in.setAction("ref");
-        in.putExtra(Constants.ReportType.class.getCanonicalName(),Constants.ReportType.conversion);
-        in.putExtra(Constants.PERIOD_STARTDATE,Utils.getStartOfADay(presenter.getFinishDate()).getTime());
-        in.putExtra(Constants.PERIOD_FINISHDATE,presenter.getFinishDate().getTime());
-        in.putExtra(ConversionData.class.getCanonicalName(),data);
-        in.putExtra(Constants.USER_ID,presenter.getUserId());
-        in.putExtra(Constants.USER_TITLE,presenter.getUserTitle());
         in.putExtra(Constants.CHOSEN_STORES,hashSet);
         startActivity(in);
     }
@@ -195,19 +202,13 @@ public class TurnoverReportActivity extends BaseActivity {
 
         if (data.isEmpty()) return;
 
+        Intent in = getBaseIntent(ConversionReportActivity.class);
+        in.putExtra(Constants.ReportType.class.getCanonicalName(),Constants.ReportType.fullness);
+        in.putExtra(ConversionData.class.getCanonicalName(),data);
         ArrayList<String> hashSet = new ArrayList<>();
         hashSet.add(data.storeId);
-        Intent in = new Intent(this, ConversionReportActivity.class);
-        in.setAction("ref");
-        in.putExtra(Constants.ReportType.class.getCanonicalName(),Constants.ReportType.fullness);
-        in.putExtra(Constants.PERIOD_STARTDATE,Utils.getStartOfADay(presenter.getFinishDate()).getTime());
-        in.putExtra(Constants.PERIOD_FINISHDATE,presenter.getFinishDate().getTime());
-        in.putExtra(ConversionData.class.getCanonicalName(),data);
         in.putExtra(Constants.CHOSEN_STORES,hashSet);
-        in.putExtra(Constants.USER_ID,presenter.getUserId());
-        in.putExtra(Constants.USER_TITLE,presenter.getUserTitle());
         startActivity(in);
-
     }
 
     public void gotoDailyFact(TurnoverData data) {
@@ -216,30 +217,7 @@ public class TurnoverReportActivity extends BaseActivity {
 
         ArrayList<String> hashSet = new ArrayList<>();
         hashSet.add(data.storeId);
-        Intent in = new Intent(this, SalesReportActivity.class);
-        in.setAction("ref");
-        in.putExtra(Constants.PERIOD_STARTDATE,Utils.getStartOfADay(presenter.getFinishDate()).getTime());
-        in.putExtra(Constants.PERIOD_FINISHDATE,presenter.getFinishDate().getTime());
-        in.putExtra(Constants.USER_ID,presenter.getUserId());
-        in.putExtra(Constants.USER_TITLE,presenter.getUserTitle());
-        in.putExtra(Constants.CHOSEN_STORES,hashSet);
-        startActivity(in);
-    }
-
-    public void gotoDailyPlan(TurnoverData data) {
-
-
-        if (data.isEmpty()) return;
-
-        ArrayList<String> hashSet = new ArrayList<>();
-        hashSet.add(data.storeId);
-
-        Intent in = new Intent(this, SalesReportActivity.class);
-        in.setAction("ref");
-        in.putExtra(Constants.PERIOD_STARTDATE,Utils.getStartOfADay(presenter.getFinishDate()).getTime());
-        in.putExtra(Constants.PERIOD_FINISHDATE,presenter.getFinishDate().getTime());
-        in.putExtra(Constants.USER_ID,presenter.getUserId());
-        in.putExtra(Constants.USER_TITLE,presenter.getUserTitle());
+        Intent in = getBaseIntent(SalesReportActivity.class);
         in.putExtra(Constants.CHOSEN_STORES,hashSet);
         startActivity(in);
     }

@@ -44,10 +44,11 @@
     <string name="action_exit">Выйти</string>
 
     <string name="on_error_check_connection">Нет интернет подключения</string>
-    <string name="on_error_connection">Ошибка подключения</string>
+    <string name="on_error_connection">Ошибка подключения к сети</string>
     <string name="on_error_loading">Ошибка загрузки данных</string>
     <string name="on_error_chosen_period">Не выбран период</string>
     <string name="on_error_chosen_stores">Не выбрано ни одного магазина</string>
     <string name="on_error_process">Ошибка обработки данных</string>
+    <string name="on_error_wrong_login_pass">Неверный логин/пароль</string>
 
 </resources>

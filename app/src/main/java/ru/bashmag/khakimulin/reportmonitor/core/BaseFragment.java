@@ -1,15 +1,11 @@
 package ru.bashmag.khakimulin.reportmonitor.core;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 import ru.bashmag.khakimulin.reportmonitor.core.di.HasComponent;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
@@ -21,8 +17,6 @@ import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 public abstract class BaseFragment extends Fragment {
 
     private boolean mIsInjected = false;
-
-    protected String startDatePref,finishDatePref,periodTitlePref,periodTypePref,storesPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,5 @@
 package ru.bashmag.khakimulin.reportmonitor.screens.reports.charts.formatters;
 
-import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 

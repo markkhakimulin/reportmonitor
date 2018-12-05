@@ -21,6 +21,7 @@ public class Constants {
     public static final String FORMATDATE_FROM_1C = "yyyy-MM-dd'T'hh:mm:ss";
     public static final String FORMATDATE_HOUR = "HH:mm";
     public static final String FORMATDATE_TO_1C = "yyyyMMdd";
+    public static final String FORMAT_DATE_HOUR = "dd.MM.yyyy HH:mm";
     public static final String GROUP = "ItemGroup";
     public static final String ID = "ID";
     public static final String ITEMS = "Items";

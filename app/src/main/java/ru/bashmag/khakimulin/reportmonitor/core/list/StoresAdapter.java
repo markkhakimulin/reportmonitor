@@ -9,9 +9,9 @@ import android.widget.CheckedTextView;
 
 import java.util.Objects;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
-import rx.Observable;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by Mark Khakimulin on 15.10.2018.

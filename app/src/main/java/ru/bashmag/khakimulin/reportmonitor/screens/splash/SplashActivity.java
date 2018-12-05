@@ -3,11 +3,12 @@ package ru.bashmag.khakimulin.reportmonitor.screens.splash;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
-import android.os.Handler;
+import android.transition.ChangeBounds;
 import android.transition.ChangeImageTransform;
 import android.transition.Fade;
 import android.transition.TransitionSet;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -202,6 +202,7 @@ public class SplashActivity extends BaseActivity {
             fade.setDuration(getResources().getInteger(R.integer.fade_time));
             set.addTransition(new Fade());
             set.addTransition(new ChangeImageTransform());
+            set.addTransition(new ChangeBounds());
             getWindow().setEnterTransition(set);
         }
     }

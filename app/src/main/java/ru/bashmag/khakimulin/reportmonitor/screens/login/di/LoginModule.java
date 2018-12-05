@@ -6,6 +6,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
@@ -13,7 +14,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.login.LoginActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.login.mvp.LoginModel;
 import ru.bashmag.khakimulin.reportmonitor.screens.login.mvp.LoginPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.
@@ -42,7 +42,10 @@ public class LoginModule {
     }
     @LoginScope
     @Provides
-    BasePresenter provideBasePresenter(DB db, RxSchedulers schedulers, LoginModel model, CompositeSubscription subscription) {
+    BasePresenter provideBasePresenter(DB db,
+                                       RxSchedulers schedulers,
+                                       LoginModel model,
+                                       CompositeDisposable subscription) {
         basePresenter =  new LoginPresenter(db,model,context, schedulers, subscription);
         return basePresenter;
     }
@@ -54,8 +57,8 @@ public class LoginModule {
     }
     @LoginScope
     @Provides
-    CompositeSubscription provideCompositeSubscription() {
-        return new CompositeSubscription();
+    CompositeDisposable provideCompositeSubscription() {
+        return new CompositeDisposable();
     }
 
 

@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.sales.SalesData;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverData;
-import rx.Observable;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by Mark Khakimulin on 01.11.2018.

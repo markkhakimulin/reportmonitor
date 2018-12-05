@@ -2,14 +2,27 @@ package ru.bashmag.khakimulin.reportmonitor.core;
 
 import android.support.annotation.CallSuper;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.ChosenStore;
@@ -17,11 +30,6 @@ import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Mark Khakimulin on 01.11.2018.
@@ -29,7 +37,7 @@ import rx.subscriptions.CompositeSubscription;
  */
 public abstract class BasePresenter {
     private BaseActivity baseView;
-    protected ArrayList<String> chosenStoreList;
+    public ArrayList<String> chosenStoreList;
     protected DB db;
     protected Date finishDate;
     protected String periodTitle;
@@ -37,8 +45,8 @@ public abstract class BasePresenter {
     protected RxSchedulers rxSchedulers;
     protected Date startDate;
     protected String storeId;
-    protected CompositeSubscription subscriptions;
-    private HashMap<Constants.ReportType, Integer> titles = new HashMap();
+    protected CompositeDisposable subscriptions;
+    private HashMap<Constants.ReportType, Integer> titles = new HashMap<Constants.ReportType, Integer>();
     protected String userId;
     protected String userTitle;
 
@@ -63,7 +71,7 @@ public abstract class BasePresenter {
     }
 
 
-    public BasePresenter(DB db, CompositeSubscription subscriptions, RxSchedulers rxSchedulers,BaseActivity baseView) {
+    public BasePresenter(DB db, CompositeDisposable subscriptions, RxSchedulers rxSchedulers,BaseActivity baseView) {
         this.db = db;
         this.subscriptions = subscriptions;
         this.rxSchedulers = rxSchedulers;
@@ -108,10 +116,10 @@ public abstract class BasePresenter {
         });
     }
 
-    protected Subscription getStoreList() {
+    protected Disposable getStoreList() {
 
         return getStores()
-            .subscribeOn(rxSchedulers.runOnBackground())
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(stores -> {
                         baseView.onShowStores(stores);
@@ -122,10 +130,10 @@ public abstract class BasePresenter {
     protected void processThrow(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException) {
             baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
-                    ,baseView.getString(R.string.dialog_vpn_settings_title)
-                    , new Func0<Void>() {
+                    , baseView.getString(R.string.dialog_vpn_settings_title)
+                    , new Callable<Void>() {
                         @Override
-                        public Void call() {
+                        public Void call() throws Exception {
                             baseView.gotoVPNSettings();
                             return null;
                         }
@@ -137,10 +145,10 @@ public abstract class BasePresenter {
                     , null);
         } else if (throwable instanceof ConnectException) {
             baseView.showYesNoMessageDialog(baseView.getString(R.string.on_error_connection)
-                    ,baseView.getString(R.string.dialog_net_settings_title)
-                    , new Func0<Void>() {
+                    , baseView.getString(R.string.dialog_net_settings_title)
+                    , new Callable<Void>() {
                         @Override
-                        public Void call() {
+                        public Void call() throws Exception {
                             baseView.gotoNETSettings();
                             return null;
                         }
@@ -153,11 +161,15 @@ public abstract class BasePresenter {
         }
     }
 
-    public ArrayList<Store> getChosenStores() {
-        return (ArrayList<Store>) db.chosenStoreDao().getChosenByUserId(userId);
+    public void getChosenStores(DisposableSingleObserver<List<Store>> callback) {
+        db.chosenStoreDao().getChosenByUserIdObservable(userId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback);
     }
-    public ArrayList<String> getChosenStoreIds() {
-        return (ArrayList<String>) db.chosenStoreDao().getChosenIdsByUserId(userId);
+    protected void checkForChosenStoreIds(DisposableSingleObserver<List<String>> callback) {
+        db.chosenStoreDao().getChosenIdsByUserIdObservable(userId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback);
     }
 
     public void setStartDate(Date startDate) {
@@ -184,10 +196,6 @@ public abstract class BasePresenter {
 
     public Date getFinishDate() {
         return this.finishDate;
-    }
-
-    public ArrayList<Store>  change() {
-        return (ArrayList<Store>) db.chosenStoreDao().getAllByUserId(userId);
     }
 
     public void setUserId(String userId) {

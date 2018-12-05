@@ -8,6 +8,9 @@ import android.arch.persistence.room.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.ChosenStore;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 
@@ -58,6 +61,12 @@ public interface UserChosenStoresDao {
 
     @Query("SELECT s.id FROM store as s INNER JOIN user_store_join as usj ON s.id=usj.id WHERE usj.user_id=:userId")
     List<String> getChosenIdsByUserId(String userId);
+
+    @Query("SELECT s.* FROM store as s INNER JOIN user_store_join as usj ON s.id=usj.id WHERE usj.user_id=:userId")
+    Single<List<Store>> getChosenByUserIdObservable(String userId);
+
+    @Query("SELECT s.id FROM store as s INNER JOIN user_store_join as usj ON s.id=usj.id WHERE usj.user_id=:userId")
+    Single<List<String>> getChosenIdsByUserIdObservable(String userId);
 
     @Insert(onConflict = 1)
     void insert(ChosenStore chosenStore);

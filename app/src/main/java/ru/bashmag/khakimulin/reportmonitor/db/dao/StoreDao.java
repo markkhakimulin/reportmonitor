@@ -22,9 +22,6 @@ public interface StoreDao {
     @Delete
     void delete(Store store);
 
-    @Delete
-    void deleteAll(List<Store> list);
-
     @Query("delete FROM store WHERE store.id not in (:storeList)")
     void deleteAllExcept(List<String> storeList);
 

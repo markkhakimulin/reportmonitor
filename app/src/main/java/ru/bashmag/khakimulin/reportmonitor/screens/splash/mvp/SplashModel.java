@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
+import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
@@ -21,7 +23,6 @@ import ru.bashmag.khakimulin.reportmonitor.db.tables.User;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.UserStore;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.DEFAULT_TIMEOUT;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_FROM_1C;
@@ -78,41 +79,40 @@ public class SplashModel {
 
                 int count = exchangeStatusList.getPropertyCount();
                 if (count > 0 && errorMessage.isEmpty()) {
-                    //clear whole table
-                    List<Store> storeList = db.storeDao().getAll();
-                    if (storeList.size() > 0)
-                        db.storeDao().deleteAll(storeList);
+
+                    SimpleDateFormat format = new SimpleDateFormat(FORMATDATE_FROM_1C, Locale.getDefault());
+                    Long currentTime = Calendar.getInstance().getTimeInMillis();
+                    ArrayList<String> storeIds = new ArrayList<>();
+
+                    for (int i = 0; i < count; i++) {
+
+                        SoapObject so = (SoapObject) exchangeStatusList.getProperty(i);
+                        SoapObject storeObject = (SoapObject)  so.getProperty(Constants.STORE);
+                        Store store = new Store();
+                        store.id = storeObject.getPropertyAsString(Constants.ID);
+                        store.code = storeObject.getPropertyAsString(Constants.CODE);
+                        store.description = storeObject.getPropertyAsString(Constants.DESCRIPTION);
+                        Date lastExchange = format.parse(so.getPropertyAsString(Constants.DATE));
+                        Date lastLoad = format.parse(so.getPropertyAsString(Constants.DATE_LOAD));
+                        Date lastUnLoad = format.parse(so.getPropertyAsString(Constants.DATE_UNLOAD));
+
+
+                        Long loadTime = (currentTime - lastLoad.getTime())/3600000;
+                        Long unLoadTime = (currentTime - lastUnLoad.getTime())/3600000;
+
+                        Long max = Math.max(loadTime, unLoadTime);
+
+                        store.actual = max <= 2 ? 1 : 0;
+                        store.loaded = lastLoad.getTime();
+                        store.unloaded = lastUnLoad.getTime();
+                        store.last = lastExchange.getTime();
+
+                        db.storeDao().insert(store);
+                        storeIds.add(store.id);
+                    }
+
+                    db.storeDao().deleteAllExcept(storeIds);
                 }
-
-                SimpleDateFormat format = new SimpleDateFormat(FORMATDATE_FROM_1C, Locale.getDefault());
-                Long currentTime = Calendar.getInstance().getTimeInMillis();
-
-                for (int i = 0; i < count; i++) {
-
-                    SoapObject so = (SoapObject) exchangeStatusList.getProperty(i);
-                    SoapObject storeObject = (SoapObject)  so.getProperty(Constants.STORE);
-                    Store store = new Store();
-                    store.id = storeObject.getPropertyAsString(Constants.ID);
-                    store.code = storeObject.getPropertyAsString(Constants.CODE);
-                    store.description = storeObject.getPropertyAsString(Constants.DESCRIPTION);
-                    Date lastExchange = format.parse(so.getPropertyAsString(Constants.DATE));
-                    Date lastLoad = format.parse(so.getPropertyAsString(Constants.DATE_LOAD));
-                    Date lastUnLoad = format.parse(so.getPropertyAsString(Constants.DATE_UNLOAD));
-
-
-                    Long loadTime = (currentTime - lastLoad.getTime())/3600000;
-                    Long unLoadTime = (currentTime - lastUnLoad.getTime())/3600000;
-
-                    Long max = Math.max(loadTime, unLoadTime);
-
-                    store.actual = max <= 2 ? 1 : 0;
-                    store.loaded = lastLoad.getTime();
-                    store.unloaded = lastUnLoad.getTime();
-                    store.last = lastExchange.getTime();
-
-                    db.storeDao().insert(store);
-                }
-
                 return errorMessage;
             }
         });
@@ -176,6 +176,17 @@ public class SplashModel {
 
                         userStores.get(id).add(storeId);
                     }
+
+                    //add default
+                    User user = new User();
+                    user.id = Constants.EMPTY_ID;
+                    user.description = context.getString(R.string.anonymous);
+                    if (!userIds.isEmpty() && userIds.contains(Constants.EMPTY_ID)) {
+                        db.userDao().update(user);
+                    } else {
+                        db.userDao().insert(user);
+                    }
+
 
                     for (String userId:userStores.keySet()) {
 

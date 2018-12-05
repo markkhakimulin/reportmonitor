@@ -4,33 +4,28 @@ import android.content.SharedPreferences;
 
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 import ru.bashmag.khakimulin.reportmonitor.R;
 import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.di.ConversionScope;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.TurnoverReportActivity;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.mvp.TurnoverModel;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.turnover.mvp.TurnoverPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
-import rx.subscriptions.CompositeSubscription;
 
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.PERIOD_FINISHDATE;
@@ -75,9 +70,14 @@ public class TurnoverModule {
 
     @TurnoverScope
     @Provides
-    BasePresenter provideBasePresenter(DB db,SharedPreferences preferences, RxSchedulers schedulers, @Named("PROD")  TurnoverModel model,CompositeSubscription subscription) {
+    BasePresenter provideBasePresenter(DB db,
+                                       SharedPreferences preferences,
+                                       RxSchedulers schedulers,
+                                       @Named("PROD")  TurnoverModel model,
+                                       CompositeDisposable subscription) {
 
-        if (preferences.getLong(Constants.PERIOD_STARTDATE,0) == 0 || preferences.getLong(Constants.PERIOD_FINISHDATE,0) == 0) {
+        if (preferences.getLong(Constants.PERIOD_STARTDATE,0) == 0
+                || preferences.getLong(Constants.PERIOD_FINISHDATE,0) == 0) {
             //дефолтный период
             DateFormat dateFormat = new SimpleDateFormat(FORMATDATE,Locale.getDefault());
 
@@ -111,8 +111,8 @@ public class TurnoverModule {
 
     @TurnoverScope
     @Provides
-    CompositeSubscription provideCompositeSubscription() {
-        return new CompositeSubscription();
+    CompositeDisposable provideCompositeSubscription() {
+        return new CompositeDisposable();
     }
 
     @TurnoverScope

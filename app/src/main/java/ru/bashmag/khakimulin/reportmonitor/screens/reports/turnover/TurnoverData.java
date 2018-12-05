@@ -6,9 +6,6 @@ import android.text.TextUtils;
 
 import java.util.Date;
 
-import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
-import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
-
 /**
  * Created by Mark Khakimulin on 26.10.2018.
  * Email : mark.khakimulin@gmail.com

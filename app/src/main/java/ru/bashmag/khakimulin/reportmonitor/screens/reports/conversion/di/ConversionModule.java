@@ -7,6 +7,7 @@ import java.util.Date;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 import ru.bashmag.khakimulin.reportmonitor.core.BasePresenter;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
@@ -14,7 +15,6 @@ import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.Conversion
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionModel;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp.ConversionPresenter;
 import ru.bashmag.khakimulin.reportmonitor.utils.rx.RxSchedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.
@@ -29,7 +29,11 @@ public class ConversionModule {
     private Date startDate;
     private String userId;
 
-    public ConversionModule(ConversionReportActivity context, Date startDate, Date finishDate, String userId, ArrayList<String> chosenStoreList) {
+    public ConversionModule(ConversionReportActivity context,
+                            Date startDate,
+                            Date finishDate,
+                            String userId,
+                            ArrayList<String> chosenStoreList) {
         this.context = context;
         this.startDate = startDate;
         this.finishDate = finishDate;
@@ -39,7 +43,10 @@ public class ConversionModule {
 
     @ConversionScope
     @Provides
-    BasePresenter provideBasePresenter(DB db, RxSchedulers schedulers, ConversionModel model, CompositeSubscription subscription) {
+    BasePresenter provideBasePresenter(DB db,
+                                       RxSchedulers schedulers,
+                                       ConversionModel model,
+                                       CompositeDisposable subscription) {
         this.basePresenter = new ConversionPresenter(db, model, this.context, schedulers, subscription);
         this.basePresenter.setStartDate(this.startDate);
         this.basePresenter.setFinishDate(this.finishDate);
@@ -50,8 +57,8 @@ public class ConversionModule {
 
     @ConversionScope
     @Provides
-    CompositeSubscription provideCompositeSubscription() {
-        return new CompositeSubscription();
+    CompositeDisposable provideCompositeSubscription() {
+        return new CompositeDisposable();
     }
 
     @ConversionScope

@@ -1,6 +1,6 @@
 package ru.bashmag.khakimulin.reportmonitor.utils.rx;
 
-import rx.Scheduler;
+import io.reactivex.Scheduler;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.

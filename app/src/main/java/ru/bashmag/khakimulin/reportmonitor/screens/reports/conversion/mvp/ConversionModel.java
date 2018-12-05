@@ -3,7 +3,6 @@ package ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.mvp;
 import android.content.Context;
 
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -15,12 +14,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
-import ru.bashmag.khakimulin.reportmonitor.db.tables.Store;
 import ru.bashmag.khakimulin.reportmonitor.screens.reports.conversion.ConversionData;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_FROM_1C;
 import static ru.bashmag.khakimulin.reportmonitor.utils.Constants.FORMATDATE_TO_1C;
@@ -46,7 +44,7 @@ public class ConversionModel {
 
     }
 
-    Observable<ArrayList<ConversionData>> getConversion(Date startDate,Date finishDate,List<String> stores,String soapMethod) {
+    Observable<ArrayList<ConversionData>> getConversion(Date startDate, Date finishDate, List<String> stores, String soapMethod) {
 
         return Observable.fromCallable(new Callable<ArrayList<ConversionData>>() {
             @Override

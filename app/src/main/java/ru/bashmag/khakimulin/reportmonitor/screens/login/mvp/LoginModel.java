@@ -10,12 +10,12 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
 import ru.bashmag.khakimulin.reportmonitor.core.TimeoutHttpTransport;
 import ru.bashmag.khakimulin.reportmonitor.db.DB;
 import ru.bashmag.khakimulin.reportmonitor.db.tables.User;
 import ru.bashmag.khakimulin.reportmonitor.utils.Constants;
 import ru.bashmag.khakimulin.reportmonitor.utils.Utils;
-import rx.Observable;
 
 /**
  * Created by Mark Khakimulin on 01.10.2018.
