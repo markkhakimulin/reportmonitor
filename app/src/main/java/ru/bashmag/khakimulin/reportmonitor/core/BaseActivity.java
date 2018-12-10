@@ -6,10 +6,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.net.VpnService;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
@@ -269,6 +276,54 @@ public abstract class BaseActivity extends AppCompatActivity
     @TargetApi(24)
     public void gotoVPNSettings() {
         startActivity(new Intent("android.settings.VPN_SETTINGS"));
+    }
+
+    @TargetApi(24)
+    public void turnOnOffVPN(Callable onVPN) {
+        registerOnVPNReceiver(onVPN);
+        turnOnVPN();
+    }
+    @TargetApi(24)
+    private void turnOnVPN() {
+
+/*        VpnService.Builder vpnBuilder = new VpnService.Builder()
+                .addAddress()
+                .addDnsServer()
+                .addDisallowedApplication();*/
+    }
+
+    @TargetApi(24)
+    public void registerOnVPNReceiver(Callable onVPN) {
+        NetworkRequest request = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            request = new NetworkRequest.Builder()
+                    .addTransportType(NetworkCapabilities.TRANSPORT_VPN)
+                    .removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+                    .build();
+        }
+        ;
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            connectivityManager.registerNetworkCallback(request, new ConnectivityManager.NetworkCallback() {
+
+                @Override
+                public void onCapabilitiesChanged(Network network,
+                                                  NetworkCapabilities networkCapabilities) {
+
+                    try {
+                        if (networkCapabilities.equals(NetworkCapabilities.TRANSPORT_VPN)) {
+                            onVPN.call();
+                        }
+
+                    } catch (Exception e) {
+
+                    }
+                }
+
+            });
+        }
+
     }
 
     protected abstract void invalidate();
